@@ -1,22 +1,20 @@
 <style>
-  /* 1. 全局变量与背景 */
+  /* ==================== 1. 全局变量定义 ==================== */
   :root {
-    /* 浅色模式变量 */
-    --glass-bg-light: rgba(248, 249, 250, 0.65);
-    --glass-border-light: rgba(255, 255, 255, 0.4);
-    --text-primary-light: #212529;
-    --text-secondary-light: #5a6169;
-    --shadow-light: rgba(0, 0, 0, 0.05);
+    /* 保持原有通透感 */
+    --glass-bg-light: rgba(255, 255, 255, 0.55); 
+    --glass-border-light: rgba(255, 255, 255, 0.6); 
+    --text-primary-light: #333;
+    --shadow-light: 0 8px 32px rgba(0, 0, 0, 0.05);
 
-    /* 深色模式变量 */
-    --glass-bg-dark: rgba(33, 37, 41, 0.75);
-    --glass-border-dark: rgba(255, 255, 255, 0.08);
-    --text-primary-dark: #f8f9fa;
-    --text-secondary-dark: #adb5bd;
-    --shadow-dark: rgba(0, 0, 0, 0.25);
+    /* 深色模式 */
+    --glass-bg-dark: rgba(0, 0, 0, 0.5);
+    --glass-border-dark: rgba(255, 255, 255, 0.1); 
+    --text-primary-dark: #eee;
+    --shadow-dark: 0 8px 32px rgba(0, 0, 0, 0.4);
     
-    --radius: 0.75rem; /* 12px */
-    --blur-amount: 20px;
+    --radius: 16px;
+    --blur: 24px;
   }
 
   /* 背景图设置 */
@@ -26,137 +24,127 @@
     background-position: center center;
     background-attachment: fixed;
   }
-  
-  /* 强制重置背景色透明，以便显示背景图 */
-  html, body, #root, .bg-card, .bg-background { background-color: transparent !important; }
-  .border, .shadow-lg, .shadow-neutral-200\/40 { border-color: transparent !important; box-shadow: none !important; }
+  html, body, #root, .bg-background { background-color: transparent !important; }
 
-  /* -----------------------------------------------------------
-     2. 核心玻璃卡片样式 (通用 + 详情页适配)
-     ----------------------------------------------------------- */
-  /* 
-     新增选择器说明：
-     .server-charts > div : 详情页中间的三大图表卡片(CPU/进程/磁盘)
-     .server-info .border : 详情页顶部的状态小方块(如版本、架构、系统)
-     .rounded-lg.border.bg-card : 详情页底部的网络延迟详情大卡片
-  */
-  .server-overview > div,
-  .server-card-list > div,
-  .header-top,
-  .server-charts > div, 
-  .server-info .border,
-  .rounded-lg.border.bg-card {
-    backdrop-filter: blur(var(--blur-amount));
-    -webkit-backdrop-filter: blur(var(--blur-amount));
+
+  /* ==================== 2. 上方：服务器信息面板 ==================== */
+  .server-info > div:first-child {
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
     border-radius: var(--radius) !important;
-    border: 1px solid transparent !important;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 28px 32px !important;
+    margin-bottom: 24px !important;
+    border: 1px solid transparent !important; 
+    box-shadow: var(--shadow-light) !important;
   }
-
-  /* -----------------------------------------------------------
-     3. 浅色与深色模式适配 (背景色与边框)
-     ----------------------------------------------------------- */
-  /* 浅色模式 */
-  html:not(.dark) .server-overview > div,
-  html:not(.dark) .server-card-list > div,
-  html:not(.dark) .header-top,
-  html:not(.dark) .server-charts > div,
-  html:not(.dark) .server-info .border,
-  html:not(.dark) .rounded-lg.border.bg-card {
-    background-color: var(--glass-bg-light) !important;
-    box-shadow: 0 4px 6px -1px var(--shadow-light), inset 0 0 0 1px var(--glass-border-light) !important;
-  }
-
-  /* 深色模式 */
-  html.dark .server-overview > div,
-  html.dark .server-card-list > div,
-  html.dark .header-top,
-  html.dark .server-charts > div,
-  html.dark .server-info .border,
-  html.dark .rounded-lg.border.bg-card {
-    background-color: var(--glass-bg-dark) !important;
-    box-shadow: 0 4px 6px -1px var(--shadow-dark), inset 0 0 0 1px var(--glass-border-dark) !important;
-  }
+  html.dark .server-info > div:first-child { box-shadow: var(--shadow-dark) !important; }
   
-  /* 悬停效果 (让卡片浮起) */
-  .server-overview > div:hover,
-  .server-card-list > div:hover,
-  .server-charts > div:hover,
-  .server-info .border:hover,
-  .rounded-lg.border.bg-card:hover {
-    transform: translateY(-2px);
-  }
-  
-  /* -----------------------------------------------------------
-     4. 文本颜色优化
-     ----------------------------------------------------------- */
-  html:not(.dark) p, html:not(.dark) div, html:not(.dark) span, html:not(.dark) h2, html:not(.dark) h3 { color: var(--text-primary-light); }
-  html:not(.dark) .text-muted-foreground, html:not(.dark) p.opacity-50 { color: var(--text-secondary-light) !important; }
-  
-  html.dark p, html.dark div, html.dark span, html.dark h2, html.dark h3 { color: var(--text-primary-dark); }
-  html.dark .text-muted-foreground, html.dark p.opacity-50 { color: var(--text-secondary-dark) !important; }
-
-  /* -----------------------------------------------------------
-     5. 组件细节优化 (去装饰化)
-     ----------------------------------------------------------- */
-  .header-top { padding: 12px 20px; }
-  .h-2.w-2.rounded-full { box-shadow: none; }
-  .animate-ping { display: none; } /* 移除呼吸灯动画，保持简洁 */
-  
-  /* 进度条背景优化 */
-  .relative.w-full.overflow-hidden.bg-secondary { background-color: rgba(127, 127, 127, 0.2) !important; }
-  .h-full.w-full.flex-1.transition-all { box-shadow: none; }
-  
-  /* 控制按钮透明化 */
-  .server-overview-controls button,
-  .server-overview-controls > section > div {
-    background: transparent !important; border: none !important; box-shadow: none !important;
-  }
-  .server-overview-controls .dark\\:bg-stone-700,
-  .server-overview-controls .bg-white {
-    background-color: var(--glass-bg-light) !important;
-  }
-  html.dark .server-overview-controls .dark\\:bg-stone-700 {
-    background-color: var(--glass-bg-dark) !important;
-  }
-  img[alt="animated-man"] { display: none; }
-
-  /* -----------------------------------------------------------
-     6. 详情页专属优化 (新增部分)
-     ----------------------------------------------------------- */
-  
-  /* 顶部状态小方块 (CPU架构, 版本等) */
   .server-info .border {
-    padding: 8px 12px !important;
-    margin-bottom: 0px !important; /* 修正布局间距 */
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
   }
+  .server-info .border > div { padding: 4px 0 !important; }
+
+
+  /* ==================== 3. 下方：图表卡片 (调整底部留白) ==================== */
+
+  .server-charts > div,
+  .rounded-lg.border.bg-card,
+  .server-overview > div,
+  .server-card-list > div {
+    backdrop-filter: blur(var(--blur));
+    -webkit-backdrop-filter: blur(var(--blur));
+    border-radius: var(--radius) !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+    box-shadow: var(--shadow-light) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    display: flex !important;
+    flex-direction: column !important;
+    
+    /* 
+       【关键修改】：
+       上: 20px (给标题留空间)
+       右: 28px (保持左右宽敞)
+       下: 10px (大幅减小底部留白，原为24px)
+       左: 28px
+    */
+    padding: 20px 28px 10px 28px !important;
+  }
+
+  /* ==================== 3.5. 内部布局微调 ==================== */
   
-  /* 详情页 Tab 切换器 (详情/网络) 美化 */
-  .server-info-tab .bg-stone-100, 
-  .server-info-tab .dark\:bg-stone-800 {
-    background-color: rgba(127,127,127, 0.15) !important;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.1);
+  /* 清除原有内边距 */
+  .server-charts .p-6, 
+  .server-charts .p-4 {
+    padding: 0 !important;
   }
-  /* Tab 选中滑块 */
-  .server-info-tab .shadow-black\/5,
-  .server-info-tab .dark\:shadow-white\/5 {
+
+  /* 
+     标题和图表之间的间距 
+     从 20px 减小到 12px，让整体更紧凑
+  */
+  .server-charts > div > div:first-child,
+  .server-overview > div > div:first-child {
+    margin-bottom: 12px !important; 
+  }
+
+  /* 去除分割线和背景 */
+  .server-charts .border-b, .server-overview .border-b { border-bottom: none !important; }
+  .server-charts .bg-muted\/50, .server-charts .bg-muted { background-color: transparent !important; }
+
+
+  /* ==================== 4. 颜色适配 ==================== */
+  html:not(.dark) .server-info > div:first-child,
+  html:not(.dark) .server-charts > div,
+  html:not(.dark) .rounded-lg.border.bg-card,
+  html:not(.dark) .server-overview > div {
     background-color: var(--glass-bg-light) !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-  }
-  html.dark .server-info-tab .shadow-black\/5,
-  html.dark .server-info-tab .dark\:shadow-white\/5 {
-    background-color: rgba(60, 60, 60, 0.8) !important;
+    border-color: var(--glass-border-light) !important;
   }
 
-  /* 网络详情大卡片内部线条优化 */
-  .rounded-lg.border.bg-card .border-b,
-  .rounded-lg.border.bg-card .sm\:border-l {
-    border-color: rgba(127, 127, 127, 0.1) !important;
+  html.dark .server-info > div:first-child,
+  html.dark .server-charts > div,
+  html.dark .rounded-lg.border.bg-card,
+  html.dark .server-overview > div {
+    background-color: var(--glass-bg-dark) !important;
+    border-color: var(--glass-border-dark) !important;
+    box-shadow: var(--shadow-dark) !important;
   }
+
+  /* ==================== 5. 图表文字优化 ==================== */
+  .text-sm.font-medium { font-size: 0.95rem !important; opacity: 0.9; }
   
-  /* 修复 EChart/Rechart 图表文字颜色 (防止在深色背景看不清) */
-  html.dark text { fill: #ccc !important; }
-  html:not(.dark) text { fill: #555 !important; }
+  html.dark text { fill: #e0e0e0 !important; }
+  html:not(.dark) text { fill: #555 !important; font-weight: 600; }
+  
+  /* 隐藏网格线 */
+  html.dark line[stroke="#ccc"] { stroke: rgba(255,255,255,0.05) !important; }
+  html:not(.dark) line[stroke="#ccc"] { stroke: rgba(0,0,0,0.03) !important; }
+  
+  .bg-secondary { background-color: rgba(128, 128, 128, 0.15) !important; }
 
+  /* ==================== 6. 其他 ==================== */
+  .server-charts > div:hover, .server-overview > div:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .server-info-tab .bg-stone-100, .server-info-tab .dark\:bg-stone-800 {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 50px !important;
+  }
+
+  .animate-ping { display: none; }
+  
+  html:not(.dark) p, html:not(.dark) div, html:not(.dark) span { color: var(--text-primary-light); }
+  html:not(.dark) .text-muted-foreground { color: #666 !important; }
+  html.dark p, html.dark div, html.dark span { color: var(--text-primary-dark); }
+  html.dark .text-muted-foreground { color: #aaa !important; }
 </style>
