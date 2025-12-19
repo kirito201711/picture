@@ -1,0 +1,162 @@
+<style>
+  /* 1. 全局变量与背景 */
+  :root {
+    /* 浅色模式变量 */
+    --glass-bg-light: rgba(248, 249, 250, 0.65);
+    --glass-border-light: rgba(255, 255, 255, 0.4);
+    --text-primary-light: #212529;
+    --text-secondary-light: #5a6169;
+    --shadow-light: rgba(0, 0, 0, 0.05);
+
+    /* 深色模式变量 */
+    --glass-bg-dark: rgba(33, 37, 41, 0.75);
+    --glass-border-dark: rgba(255, 255, 255, 0.08);
+    --text-primary-dark: #f8f9fa;
+    --text-secondary-dark: #adb5bd;
+    --shadow-dark: rgba(0, 0, 0, 0.25);
+    
+    --radius: 0.75rem; /* 12px */
+    --blur-amount: 20px;
+  }
+
+  /* 背景图设置 */
+  body, html {
+    background-image: url('https://www.kiritoasuna.eu.org/public/uploads/bed63134-8dbc-4f69-9cda-69bd5050a141.webp');
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+  }
+  
+  /* 强制重置背景色透明，以便显示背景图 */
+  html, body, #root, .bg-card, .bg-background { background-color: transparent !important; }
+  .border, .shadow-lg, .shadow-neutral-200\/40 { border-color: transparent !important; box-shadow: none !important; }
+
+  /* -----------------------------------------------------------
+     2. 核心玻璃卡片样式 (通用 + 详情页适配)
+     ----------------------------------------------------------- */
+  /* 
+     新增选择器说明：
+     .server-charts > div : 详情页中间的三大图表卡片(CPU/进程/磁盘)
+     .server-info .border : 详情页顶部的状态小方块(如版本、架构、系统)
+     .rounded-lg.border.bg-card : 详情页底部的网络延迟详情大卡片
+  */
+  .server-overview > div,
+  .server-card-list > div,
+  .header-top,
+  .server-charts > div, 
+  .server-info .border,
+  .rounded-lg.border.bg-card {
+    backdrop-filter: blur(var(--blur-amount));
+    -webkit-backdrop-filter: blur(var(--blur-amount));
+    border-radius: var(--radius) !important;
+    border: 1px solid transparent !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  /* -----------------------------------------------------------
+     3. 浅色与深色模式适配 (背景色与边框)
+     ----------------------------------------------------------- */
+  /* 浅色模式 */
+  html:not(.dark) .server-overview > div,
+  html:not(.dark) .server-card-list > div,
+  html:not(.dark) .header-top,
+  html:not(.dark) .server-charts > div,
+  html:not(.dark) .server-info .border,
+  html:not(.dark) .rounded-lg.border.bg-card {
+    background-color: var(--glass-bg-light) !important;
+    box-shadow: 0 4px 6px -1px var(--shadow-light), inset 0 0 0 1px var(--glass-border-light) !important;
+  }
+
+  /* 深色模式 */
+  html.dark .server-overview > div,
+  html.dark .server-card-list > div,
+  html.dark .header-top,
+  html.dark .server-charts > div,
+  html.dark .server-info .border,
+  html.dark .rounded-lg.border.bg-card {
+    background-color: var(--glass-bg-dark) !important;
+    box-shadow: 0 4px 6px -1px var(--shadow-dark), inset 0 0 0 1px var(--glass-border-dark) !important;
+  }
+  
+  /* 悬停效果 (让卡片浮起) */
+  .server-overview > div:hover,
+  .server-card-list > div:hover,
+  .server-charts > div:hover,
+  .server-info .border:hover,
+  .rounded-lg.border.bg-card:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* -----------------------------------------------------------
+     4. 文本颜色优化
+     ----------------------------------------------------------- */
+  html:not(.dark) p, html:not(.dark) div, html:not(.dark) span, html:not(.dark) h2, html:not(.dark) h3 { color: var(--text-primary-light); }
+  html:not(.dark) .text-muted-foreground, html:not(.dark) p.opacity-50 { color: var(--text-secondary-light) !important; }
+  
+  html.dark p, html.dark div, html.dark span, html.dark h2, html.dark h3 { color: var(--text-primary-dark); }
+  html.dark .text-muted-foreground, html.dark p.opacity-50 { color: var(--text-secondary-dark) !important; }
+
+  /* -----------------------------------------------------------
+     5. 组件细节优化 (去装饰化)
+     ----------------------------------------------------------- */
+  .header-top { padding: 12px 20px; }
+  .h-2.w-2.rounded-full { box-shadow: none; }
+  .animate-ping { display: none; } /* 移除呼吸灯动画，保持简洁 */
+  
+  /* 进度条背景优化 */
+  .relative.w-full.overflow-hidden.bg-secondary { background-color: rgba(127, 127, 127, 0.2) !important; }
+  .h-full.w-full.flex-1.transition-all { box-shadow: none; }
+  
+  /* 控制按钮透明化 */
+  .server-overview-controls button,
+  .server-overview-controls > section > div {
+    background: transparent !important; border: none !important; box-shadow: none !important;
+  }
+  .server-overview-controls .dark\\:bg-stone-700,
+  .server-overview-controls .bg-white {
+    background-color: var(--glass-bg-light) !important;
+  }
+  html.dark .server-overview-controls .dark\\:bg-stone-700 {
+    background-color: var(--glass-bg-dark) !important;
+  }
+  img[alt="animated-man"] { display: none; }
+
+  /* -----------------------------------------------------------
+     6. 详情页专属优化 (新增部分)
+     ----------------------------------------------------------- */
+  
+  /* 顶部状态小方块 (CPU架构, 版本等) */
+  .server-info .border {
+    padding: 8px 12px !important;
+    margin-bottom: 0px !important; /* 修正布局间距 */
+  }
+  
+  /* 详情页 Tab 切换器 (详情/网络) 美化 */
+  .server-info-tab .bg-stone-100, 
+  .server-info-tab .dark\:bg-stone-800 {
+    background-color: rgba(127,127,127, 0.15) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  /* Tab 选中滑块 */
+  .server-info-tab .shadow-black\/5,
+  .server-info-tab .dark\:shadow-white\/5 {
+    background-color: var(--glass-bg-light) !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+  }
+  html.dark .server-info-tab .shadow-black\/5,
+  html.dark .server-info-tab .dark\:shadow-white\/5 {
+    background-color: rgba(60, 60, 60, 0.8) !important;
+  }
+
+  /* 网络详情大卡片内部线条优化 */
+  .rounded-lg.border.bg-card .border-b,
+  .rounded-lg.border.bg-card .sm\:border-l {
+    border-color: rgba(127, 127, 127, 0.1) !important;
+  }
+  
+  /* 修复 EChart/Rechart 图表文字颜色 (防止在深色背景看不清) */
+  html.dark text { fill: #ccc !important; }
+  html:not(.dark) text { fill: #555 !important; }
+
+</style>
